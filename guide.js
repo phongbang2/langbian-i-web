@@ -30,8 +30,8 @@ for (const element of [guide, openGuide]) {
   }
 }
 guide.addEventListener('close', () => {
-  const canvas = document.getElementById('nostalgist-canvas');
-  if (canvas.tabIndex >= 0) canvas.focus();
+  const canvas = document.querySelector('#stage canvas');
+  if (canvas?.tabIndex >= 0) canvas.focus();
 });
 
 function showView(view) {

@@ -1,5 +1,8 @@
 <!doctype html>
-<html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#211b16">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Truyền Thuyết LangBiAn I</title>
 <style>
 body { margin: 0; background: #141414; color: white; font: 18px system-ui; }
@@ -24,10 +27,58 @@ button { pointer-events: auto; padding: .7em 1em; font: inherit; }
 #guide article button, #guide-basics { margin-top: 12px; }
 #guide .note { color: #d7c5a9; font-size: .85rem; }
 </style>
-<canvas id="nostalgist-canvas"></canvas>
-<div id="spinner-target"><div id="progressbar-target"></div><button id="user-activation-prompt" hidden>Chơi LangBiAn I</button></div>
-<div id="gamepad-target"></div>
-<button id="open-guide" type="button" aria-haspopup="dialog">Sổ tay</button>
+<link rel="stylesheet" href="mobile.css?v=20261114-iphone-1">
+<main id="game-app">
+  <header id="toolbar">
+    <strong>LangBiAn I</strong>
+    <nav aria-label="Công cụ game">
+      <button id="toggle-controls" type="button" aria-pressed="false">Hiện phím</button>
+      <button id="toggle-extra" type="button" aria-controls="extra-keys" aria-expanded="false" hidden>Phím phụ</button>
+      <button id="open-guide" type="button" aria-haspopup="dialog">Sổ tay</button>
+    </nav>
+  </header>
+  <section id="stage" aria-label="Màn hình game">
+    <canvas id="nostalgist-canvas" tabindex="0" width="640" height="480" aria-label="Truyền Thuyết LangBiAn I"></canvas>
+    <div id="spinner-target">
+      <div class="loading-card">
+        <h1>Truyền Thuyết LangBiAn I</h1>
+        <div id="progressbar-target"></div>
+        <p id="load-status" role="status" aria-live="polite">Đang chuẩn bị game…</p>
+        <button id="user-activation-prompt" type="button" disabled>Đang tải dữ liệu…</button>
+        <button id="retry-game" type="button" hidden>Thử lại</button>
+        <p class="load-note">Lần đầu tải khoảng 185 MB. Nên dùng Wi-Fi.<br>Trên iPhone, mở bằng Safari và xoay ngang để chơi.</p>
+      </div>
+    </div>
+  </section>
+  <section id="touch-controls" aria-label="Điều khiển cảm ứng">
+    <div id="dpad" role="group" aria-label="Di chuyển">
+      <button type="button" class="pad-up" data-game-button="up" aria-label="Đi lên" disabled>▲</button>
+      <button type="button" class="pad-left" data-game-button="left" aria-label="Sang trái" disabled>◀</button>
+      <span class="pad-center" aria-hidden="true">✦</span>
+      <button type="button" class="pad-right" data-game-button="right" aria-label="Sang phải" disabled>▶</button>
+      <button type="button" class="pad-down" data-game-button="down" aria-label="Đi xuống" disabled>▼</button>
+    </div>
+    <div id="action-buttons" role="group" aria-label="Thao tác">
+      <button type="button" data-game-button="b" aria-label="X: Menu hoặc quay lại" disabled>X<small>Menu / Lùi</small></button>
+      <button type="button" class="confirm-key" data-game-button="a" aria-label="C: Xác nhận" disabled>C<small>Đồng ý</small></button>
+      <button type="button" data-game-button="x" aria-label="Phím Z" disabled>Z</button>
+      <button type="button" data-game-button="r2" aria-label="Phím Shift" disabled>Shift</button>
+    </div>
+  </section>
+  <p id="play-hint">Di chuyển bằng mũi tên · C: đồng ý · X: menu / lùi</p>
+</main>
+<aside id="extra-keys" aria-label="Phím phụ" hidden>
+  <p>Giữ nút để dùng cùng phím di chuyển.</p>
+  <div class="key-grid">
+    <button type="button" data-game-button="y" aria-label="Phím A" disabled>A</button>
+    <button type="button" data-game-button="l3" aria-label="Phím S" disabled>S</button>
+    <button type="button" data-game-button="r3" aria-label="Phím D" disabled>D</button>
+    <button type="button" data-game-button="l" aria-label="Phím Q" disabled>Q</button>
+    <button type="button" data-game-button="r" aria-label="Phím W" disabled>W</button>
+    <button type="button" data-game-button="l2" aria-label="Phím Ctrl" disabled>Ctrl</button>
+    <button type="button" data-game-button="start" aria-label="Phím Alt" disabled>Alt</button>
+  </div>
+</aside>
 <dialog id="guide" aria-labelledby="guide-title">
   <header><h1 id="guide-title">Sổ tay</h1><form method="dialog"><button>Đóng</button></form></header>
   <p class="note">Theo hướng dẫn của jenchow · Gồm 7 phần theo thứ tự trong game.</p>
@@ -232,46 +283,6 @@ button { pointer-events: auto; padding: .7em 1em; font: inherit; }
 </article>
   </section>
 </dialog>
-<script>
-  const playButton = document.getElementById('user-activation-prompt');
-  playButton.style.display = 'none';
-  playButton.hidden = false;
-</script>
 <script src="guide.js" defer></script>
-<script type="module">
-  if (window.crossOriginIsolated) {
-    sessionStorage.removeItem('langbian-pages-isolation:' + location.pathname);
-    try {
-      await import('./nostalgist.js?v=20261113-wasm-parts');
-    } catch (error) {
-      console.error(error);
-      const status = document.getElementById('progressbar-target');
-      status.style.width = 'auto';
-      status.style.height = 'auto';
-      status.textContent = 'Tải game chưa hoàn tất. Hãy kiểm tra kết nối rồi tải lại trang.';
-    }
-  } else {
-    const status = document.getElementById('progressbar-target');
-    status.style.width = 'auto';
-    status.textContent = 'Đang chuẩn bị trình chạy…';
-    const reloadKey = 'langbian-pages-isolation:' + location.pathname;
-    try {
-      if (!navigator.serviceWorker || sessionStorage.getItem(reloadKey)) {
-        throw new Error('Cross-origin isolation unavailable');
-      }
-      const controlled = new Promise(resolve => {
-        if (navigator.serviceWorker.controller) resolve();
-        else navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true });
-      });
-      await navigator.serviceWorker.register('./coi-serviceworker.min.js');
-      await controlled;
-      sessionStorage.setItem(reloadKey, '1');
-      location.reload();
-    } catch (error) {
-      console.error(error);
-      status.textContent = 'Không khởi động được game. Hãy mở trang trong một tab trình duyệt riêng.';
-      sessionStorage.removeItem(reloadKey);
-    }
-  }
-</script>
+<script type="module" src="boot.js?v=20261114-iphone-1"></script>
 </html>
