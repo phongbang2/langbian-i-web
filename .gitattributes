@@ -1,0 +1,7 @@
+* text=auto
+*.html text eol=lf
+*.js text eol=lf
+mkxp-z_libretro.js -text
+*.md text eol=lf
+*.wasm binary
+game-parts/* binary
