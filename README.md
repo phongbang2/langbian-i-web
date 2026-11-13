@@ -14,7 +14,7 @@ Bản thử nghiệm chạy game trên trình duyệt bằng mkxp-z/libretro và
 
 ## Chơi trên iPhone
 
-1. Mở [bản dành cho màn hình cảm ứng](https://phongbang2.github.io/langbian-i-web/play.html?v=20261114-iphone-1) trực tiếp bằng Safari. Nếu đang xem link trong Zalo hoặc Facebook, chọn mở bằng Safari.
+1. Mở [bản dành cho màn hình cảm ứng](https://phongbang2.github.io/langbian-i-web/play.html?v=20261114-ios-memory-1) trực tiếp bằng Safari. Nếu đang xem link trong Zalo hoặc Facebook, chọn mở bằng Safari.
 2. Dùng Wi-Fi cho lần tải đầu; đợi nút **Chơi LangBiAn I** sáng lên rồi chạm để bắt đầu.
 3. Xoay ngang để chơi, hoặc giữ dọc nếu thuận tay. Màn hình giữ tỷ lệ 4:3, các nút nằm ngoài vùng game và tránh vùng tai thỏ/thanh Home.
 4. Giữ các mũi tên để di chuyển; **C** xác nhận/nói chuyện; **X** mở menu hoặc quay lại. Có thể giữ nhiều phím cùng lúc. Nút **Phím phụ** mở A/S/D/Q/W/Ctrl/Alt; Z và Shift nằm sẵn bên cạnh C/X.
@@ -23,6 +23,10 @@ Bản thử nghiệm chạy game trên trình duyệt bằng mkxp-z/libretro và
 Nên dùng iOS/Safari được cập nhật. Khả năng chạy còn phụ thuộc bộ nhớ thiết bị và việc trình duyệt cho phép WebAssembly dùng nhiều luồng. Nếu không khởi động được, trang sẽ hiện cách thử lại thay vì chỉ để màn hình trống.
 
 Giao diện cảm ứng nằm trong `mobile.css` và `mobile.js`; `boot.js` chuẩn bị môi trường trình duyệt và báo lỗi tải. Phím được nhả khi đổi tab, đổi hướng hoặc mở Sổ tay. Mỗi lần chạm ngắn được giữ tối thiểu 80 ms để game có thể nhận phím khi tốc độ khung hình thấp.
+
+Bản `ios-memory-1` cấp trước 128 MiB bộ nhớ cho iPhone/iPad, cho phép tăng tối đa 512 MiB; nhận diện cả iPad đang dùng chế độ trang web máy tính. Trần bộ nhớ được chuyển tới các luồng chạy game. Dữ liệu được tải dưới dạng Blob và ghi từng phần 1 MiB vào hệ thống tệp, tránh tạo rồi đọc lại một tệp tạm bằng cả gói game. Game, đồ họa và âm thanh giữ nguyên dữ liệu gốc.
+
+Nếu thấy `Out of memory`, đóng các tab game và thoát hẳn Safari từ màn hình đa nhiệm rồi mở lại link. [WebKit ghi nhận lỗi giữ bộ nhớ sau khi tải lại trên iOS 17](https://bugs.webkit.org/show_bug.cgi?id=222097). Khả năng chạy trên thiết bị Apple thật vẫn cần người dùng xác nhận; kiểm thử Chromium với cấu hình bộ nhớ iPad không thay thế kiểm thử Safari trên thiết bị.
 
 ## Xuất bản
 
