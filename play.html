@@ -240,7 +240,16 @@ button { pointer-events: auto; padding: .7em 1em; font: inherit; }
 <script src="guide.js" defer></script>
 <script type="module">
   if (window.crossOriginIsolated) {
-    await import('./nostalgist.js');
+    sessionStorage.removeItem('langbian-pages-isolation:' + location.pathname);
+    try {
+      await import('./nostalgist.js');
+    } catch (error) {
+      console.error(error);
+      const status = document.getElementById('progressbar-target');
+      status.style.width = 'auto';
+      status.style.height = 'auto';
+      status.textContent = 'Tải game chưa hoàn tất. Hãy kiểm tra kết nối rồi tải lại trang.';
+    }
   } else {
     const status = document.getElementById('progressbar-target');
     status.style.width = 'auto';

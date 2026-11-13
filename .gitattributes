@@ -5,3 +5,4 @@ mkxp-z_libretro.js -text
 *.md text eol=lf
 *.wasm binary
 game-parts/* binary
+wasm-parts/* binary
