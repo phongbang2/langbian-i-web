@@ -16,7 +16,7 @@ Bản thử nghiệm chạy game trên trình duyệt bằng mkxp-z/libretro và
 
 GitHub Pages phục vụ nhánh `main`, thư mục gốc. `.nojekyll` giữ nguyên các tệp nhị phân. Gói game chia thành 9 phần trong `game-parts/`, lõi WebAssembly chia thành 3 phần trong `wasm-parts/`. Mỗi phần tối đa 16 MiB. Trình khởi chạy ghép các phần và dùng mã SHA-256 để nhận diện phiên bản bộ nhớ đệm; dữ liệu đã được đối chiếu mã băm trước khi xuất bản.
 
-`coi-serviceworker.min.js` cung cấp các header COOP/COEP cần cho WebAssembly dùng nhiều luồng. Lần mở đầu tiên có thể tự tải lại trang để kích hoạt service worker. Để thử ở máy cá nhân, chạy `python -m http.server 8767` trong thư mục này rồi mở `http://localhost:8767/`.
+`coi-serviceworker.min.js` cung cấp các header COOP/COEP cần cho WebAssembly dùng nhiều luồng. Lần mở đầu tiên có thể tự tải lại trang để kích hoạt service worker. Máy chủ thử ở máy cá nhân cần phục vụ `.js` với kiểu `text/javascript` hoặc `application/javascript`, và `.wasm` với kiểu `application/wasm`.
 
 ## Thành phần sử dụng
 

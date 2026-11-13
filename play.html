@@ -242,7 +242,7 @@ button { pointer-events: auto; padding: .7em 1em; font: inherit; }
   if (window.crossOriginIsolated) {
     sessionStorage.removeItem('langbian-pages-isolation:' + location.pathname);
     try {
-      await import('./nostalgist.js');
+      await import('./nostalgist.js?v=20261113-wasm-parts');
     } catch (error) {
       console.error(error);
       const status = document.getElementById('progressbar-target');
