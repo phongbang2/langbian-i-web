@@ -6,3 +6,4 @@ mkxp-z_libretro.js -text
 *.wasm binary
 game-parts/* binary
 wasm-parts/* binary
+wasm-chunks-v1/*.bin binary

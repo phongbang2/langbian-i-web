@@ -1,9 +1,12 @@
 // The public mirror is pinned to the commit containing these exact asset bytes.
 const assetMirror = 'https://raw.githubusercontent.com/phongbang2/langbian-i-web/dd908d5fdbd629bb09bfc3e48378bd997c4490ed/';
+const wasmMirror = 'https://raw.githubusercontent.com/phongbang2/langbian-i-web/1fc7f388edfc731ff213e3f318f551adcbfaab21/';
+const wasmDirectory = 'wasm-chunks-v1';
+const wasmChunkSize = 2 * 1024 * 1024;
 
-export async function downloadAsset(path, expectedSize) {
+export async function downloadAsset(path, expectedSize, mirror = assetMirror) {
   const failures = [];
-  for (const [source, url] of [['GitHub Pages', './' + path], ['GitHub', assetMirror + path]]) {
+  for (const [source, url] of [['GitHub Pages', './' + path], ['GitHub', mirror + path]]) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 120000);
     try {
@@ -21,6 +24,17 @@ export async function downloadAsset(path, expectedSize) {
     }
   }
   throw new Error(path + ' — ' + failures.join(' | '));
+}
+
+export async function downloadWasm(expectedSize, onChunkLoaded) {
+  const chunks = [];
+  for (let offset = 0; offset < expectedSize; offset += wasmChunkSize) {
+    const path = wasmDirectory + '/' + chunks.length + '.bin';
+    const chunk = await downloadAsset(path, Math.min(wasmChunkSize, expectedSize - offset), wasmMirror);
+    chunks.push(chunk);
+    onChunkLoaded(chunk.size);
+  }
+  return new Blob(chunks, { type: 'application/wasm' });
 }
 
 // Write large assets once, without a temporary file or full-size readback.
