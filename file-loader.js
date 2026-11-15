@@ -2,7 +2,9 @@
 const assetMirror = 'https://raw.githubusercontent.com/phongbang2/langbian-i-web/dd908d5fdbd629bb09bfc3e48378bd997c4490ed/';
 const wasmMirror = 'https://raw.githubusercontent.com/phongbang2/langbian-i-web/1fc7f388edfc731ff213e3f318f551adcbfaab21/';
 const wasmDirectory = 'wasm-chunks-v1';
-const wasmChunkSize = 2 * 1024 * 1024;
+const gameMirror = 'https://raw.githubusercontent.com/phongbang2/langbian-i-web/a5981f112738a4c8341b7fde3d291576130942a6/';
+const gameDirectory = 'game-chunks-v1';
+const downloadChunkSize = 2 * 1024 * 1024;
 
 export async function downloadAsset(path, expectedSize, mirror = assetMirror) {
   const failures = [];
@@ -26,15 +28,29 @@ export async function downloadAsset(path, expectedSize, mirror = assetMirror) {
   throw new Error(path + ' — ' + failures.join(' | '));
 }
 
-export async function downloadWasm(expectedSize, onChunkLoaded) {
+async function downloadChunks(directory, mirror, expectedSize, onChunkLoaded, batchSize, type) {
   const chunks = [];
-  for (let offset = 0; offset < expectedSize; offset += wasmChunkSize) {
-    const path = wasmDirectory + '/' + chunks.length + '.bin';
-    const chunk = await downloadAsset(path, Math.min(wasmChunkSize, expectedSize - offset), wasmMirror);
-    chunks.push(chunk);
-    onChunkLoaded(chunk.size);
+  const count = Math.ceil(expectedSize / downloadChunkSize);
+  for (let start = 0; start < count; start += batchSize) {
+    const batch = [];
+    for (let index = start; index < Math.min(start + batchSize, count); index++) {
+      const path = directory + '/' + index + '.bin';
+      const size = Math.min(downloadChunkSize, expectedSize - index * downloadChunkSize);
+      batch.push(downloadAsset(path, size, mirror));
+    }
+    const loaded = await Promise.all(batch);
+    chunks.push(...loaded);
+    for (const chunk of loaded) onChunkLoaded(chunk.size);
   }
-  return new Blob(chunks, { type: 'application/wasm' });
+  return new Blob(chunks, { type });
+}
+
+export function downloadWasm(expectedSize, onChunkLoaded) {
+  return downloadChunks(wasmDirectory, wasmMirror, expectedSize, onChunkLoaded, 1, 'application/wasm');
+}
+
+export function downloadGame(expectedSize, onChunkLoaded, appleMobile) {
+  return downloadChunks(gameDirectory, gameMirror, expectedSize, onChunkLoaded, appleMobile ? 1 : 3, 'application/zip');
 }
 
 // Write large assets once, without a temporary file or full-size readback.
