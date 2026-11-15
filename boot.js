@@ -19,7 +19,7 @@ function describeError(error) {
   summary.textContent = 'Chi tiết lỗi — gửi lại phần này để được sửa';
   const text = document.createElement('pre');
   text.style.cssText = 'white-space:pre-wrap;overflow-wrap:anywhere;max-height:180px;overflow:auto;text-align:left;font-size:12px;user-select:text';
-  text.textContent = ['Bản: ios-memory-1', 'Bước: ' + startup.stage, code, 'Bộ nhớ: ' + (startup.memory || 'mặc định'), 'Trình duyệt: ' + navigator.userAgent, ...startup.notes].join('\n');
+  text.textContent = ['Bản: download-1', 'Bước: ' + startup.stage, code, 'Bộ nhớ: ' + (startup.memory || 'mặc định'), 'Trình duyệt: ' + navigator.userAgent, ...startup.notes].join('\n');
   details.append(summary, text);
   document.querySelector('.loading-card').append(details);
 }
@@ -71,7 +71,7 @@ try {
     startup.memory = memory.wasmMemory ? '128 MiB ban đầu / tối đa 512 MiB' : '128 MiB ban đầu / tối đa 2048 MiB';
     startup.stage = 'import-launcher';
     setStatus('Đang tải dữ liệu game. Lần đầu có thể mất vài phút…');
-    await import('./nostalgist.js?v=20261114-ios-memory-1');
+    await import('./nostalgist.js?v=20261115-download-1');
   }
 } catch (error) {
   console.error('Game startup failed', error);
